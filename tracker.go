@@ -62,7 +62,15 @@ func (t *Tracker) Start() error {
 }
 
 func (t *Tracker) GenerateLink(id string) string {
-	return fmt.Sprintf("https://%s%s?id=%s", t.config.Domain, t.config.Path, id)
+	protocol := "https"
+	// Use http for localhost or 127.0.0.1
+	if t.config.Domain == "localhost" ||
+		t.config.Domain == "localhost:"+fmt.Sprint(t.config.Port) ||
+		t.config.Domain == "127.0.0.1" ||
+		t.config.Domain == "127.0.0.1:"+fmt.Sprint(t.config.Port) {
+		protocol = "http"
+	}
+	return fmt.Sprintf("%s://%s%s?id=%s", protocol, t.config.Domain, t.config.Path, id)
 }
 
 func getIP(r *http.Request) string {
